@@ -1,19 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard PRO React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { useEffect, useState } from "react";
 import { calculateRange, sliceData } from '../../../utils/table-pagination';
 
@@ -41,6 +25,8 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
+import { instance } from "../../../Intance/intance";
+
 
 
 
@@ -53,16 +39,18 @@ function Users() {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState([]);
   const [editData, setEditData] = useState({});
-
+  const [dataIndex ,setDataIndex] = useState([])
+  const [userName , setUserName] = useState({
+    email :'',
+  })
+  // console.log('users.emailusers.emailusers.email' ,)
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('http://191.101.3.45/api/admin-panel/users')
-        const data = await response.json();
-        console.log('this is the data - ', data)
-        setUsers(data);
-        setPagination(calculateRange(data, 5));
+        const response =  await instance.get('/api/admin-panel/users')
+        setUsers(response.data);
+        setPagination(calculateRange(response, 5));
         setPage(1);
       } catch (error) {
         throw error;
@@ -70,9 +58,12 @@ function Users() {
     }
     fetchUser();
   }, []);
-  const handleEditClick = (rowData) => {
-    setEditData(rowData);
+  const handleEditClick = (e , selectIndex) => {
+    // setEditData(rowData);
+    const newFrom = users.find((val ,index) => index  == selectIndex);
+    setDataIndex(newFrom)
   };
+  console.log('selectIndexselectIndexselectIndexselectIndex' , dataIndex);
   const handleSaveClick = async () => {
     try {
       const response = await fetch('http://191.101.3.45/api/admin-user-crud', {
@@ -88,7 +79,14 @@ function Users() {
       console.error(error);
     }
   };
-
+  // console.log('users.emailusers.emailusers.emailusers.emailusers.email' ,users[0].email)
+  // value change
+  
+  console.log('userNameuserName' ,dataIndex.email)
+  const valueChange  = (e) => {
+      const {name , value } = e.target;
+      setUserName({...userName , [name] : value})
+  }
   const renderSaveButton =() => {
     return (
       <button type="button" onClick={handleSaveClick}>
@@ -139,7 +137,7 @@ function Users() {
                   </tr>
                 </thead>
                 <tbody className="list">
-                  {users?.map((users, index) => (
+                  {(users.length) && users?.map((users, index) => (
 
                     <tr key={index}>
                       <td className="text-right">
@@ -155,8 +153,7 @@ function Users() {
                           <DropdownMenu className="dropdown-menu-arrow" right>
                             <DropdownItem
                               href="#pablo"
-                              onClick={() => handleEditClick(users)}
-                              
+                              onClick={(e) => handleEditClick(e ,index)}
                             >
                               Edit
                               {editData.id === index.id && renderSaveButton()}
@@ -195,7 +192,20 @@ function Users() {
                           </Media>
                         </Media>
                       </th>
-                      <td className="budget">{users.email}</td>
+                      <td className="budget">
+                        <div className={`${dataIndex.id === users.id ? 'userFeildActive' : ''}`}>
+                          {users.email}
+                          </div>
+                          {
+                          (dataIndex &&  dataIndex.id === users.id) && 
+                            <input 
+                              type="text"
+                              value={userName.email}
+                              name = "email"
+                              onChange={e => valueChange(e)} 
+                            />
+                          }
+                      </td>
                       <td>
                         <Badge color={users.isVerified ? 'success' : 'warning'} className="badge-dot mr-4">
                           <i className={users.isVerified ? 'bg-success' : 'bg-warning'} />

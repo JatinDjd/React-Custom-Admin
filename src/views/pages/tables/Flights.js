@@ -1,23 +1,6 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { useEffect, useState } from "react";
-// javascript plugin that creates a sortable object from a dom object
 import List from "list.js";
-// reactstrap components
 import {
   Badge,
   Card,
@@ -41,6 +24,7 @@ import {
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { calculateRange, sliceData } from '../../../utils/table-pagination';
 import iatadata from '../../../constants/Iata';
+import { instance } from "Intance/intance";
 
 
 
@@ -54,7 +38,7 @@ function Flights() {
   useEffect(() => {
     const fetchFlights = async () => {
       try {
-        const response = await fetch('http://191.101.3.45/api/admin-panel/flight-orders')
+        const response = await fetch(`${instance}/api/admin-panel/flight-orders`)
         const data = await response.json();
         console.log('this is the data - ', data)
         setFlights(data);
@@ -71,7 +55,6 @@ function Flights() {
     const iataObject = iatadata.find(item => item.iata_code === iataCode);
     return iataObject ? iataObject.city : iataCode;
 }
-
   return (
     <>
       <SimpleHeader name="Flights Tables" parentName="Tables" />

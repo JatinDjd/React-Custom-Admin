@@ -52,6 +52,7 @@ html.rtl {
   margin-right: 0;
   margin-left: initial;
 }
+
 @media (min-width: 768px) {
   .rtl .dl-horizontal dt {
     float: right;
